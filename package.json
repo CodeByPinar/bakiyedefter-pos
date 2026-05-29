@@ -1,0 +1,110 @@
+{
+  "name": "bakiyedefter-pos",
+  "version": "1.6.3",
+  "private": true,
+  "description": "Offline-first desktop POS, cari hesap, veresiye and tahsilat system for small businesses.",
+  "main": "out/main/main.cjs",
+  "type": "module",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "npm run typecheck && electron-vite build",
+    "preview": "electron-vite preview",
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:integrity": "tsx --tsconfig tsconfig.node.json scripts/run-integrity.ts",
+    "rebuild:electron": "electron-rebuild -f -w better-sqlite3",
+    "rebuild:node": "npm rebuild better-sqlite3",
+    "dist": "npm run build && npm run rebuild:electron && electron-builder --win --dir -c.win.signAndEditExecutable=false --publish never && powershell -ExecutionPolicy Bypass -File scripts/package-demo-windows.ps1 && npm run rebuild:node",
+    "dist:win": "npm run dist",
+    "dist:installer": "npm run build && npm run rebuild:electron && electron-builder --win nsis portable --publish never && npm run rebuild:node"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@tanstack/react-query": "^5.90.11",
+    "@tanstack/react-virtual": "^3.13.13",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.4.6",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "electron-updater": "^6.6.2",
+    "exceljs": "^4.4.0",
+    "lucide-react": "^0.468.0",
+    "nanoid": "^5.1.6",
+    "pdfkit": "^0.17.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-hook-form": "^7.67.0",
+    "zustand": "^5.0.8",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.10.1",
+    "@types/pdfkit": "^0.17.4",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "electron": "^39.2.4",
+    "electron-builder": "^26.0.12",
+    "electron-vite": "^4.0.0",
+    "jsdom": "^27.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.4",
+    "vitest": "^4.0.13"
+  },
+  "build": {
+    "appId": "com.bakiyedefter.pos",
+    "productName": "BakiyeDefter POS",
+    "directories": {
+      "output": "release"
+    },
+    "artifactName": "${productName}-Demo-${version}-${arch}.${ext}",
+    "files": [
+      "out/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build/icon.ico",
+        "to": "icon.ico"
+      }
+    ],
+    "toolsets": {
+      "winCodeSign": "1.1.0"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "signExts": [
+        "!.exe",
+        "!.dll",
+        "!.node"
+      ],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
